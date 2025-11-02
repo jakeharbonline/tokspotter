@@ -136,9 +136,9 @@ export async function GET(request: NextRequest) {
 
         // Check if target is a category/listing page or direct product
         if (target.includes('/category/') || target.includes('/shop/')) {
-          // Scrape category to get product URLs (100 per category for comprehensive coverage)
+          // Scrape category to get product URLs (50 per category for comprehensive coverage)
           console.log(`📂 Scraping category: ${target}`);
-          productUrls = await scraper.scrapeCategory(target, 100);
+          productUrls = await scraper.scrapeCategory(target, 50);
         } else {
           // Direct product URL
           productUrls = [target];
