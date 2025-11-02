@@ -1,4 +1,4 @@
-# 🎯 Quick Start - What You Need To Do
+# 🎯 Quick Start - TypeScript Only!
 
 ## Immediate Next Steps (Start Here!)
 
@@ -7,8 +7,9 @@
 Download and install these (if you haven't already):
 
 - **Node.js 18+**: https://nodejs.org/
-- **Python 3.10+**: https://www.python.org/downloads/
 - **pnpm**: Open terminal and run `npm install -g pnpm`
+
+**That's it! No Python needed!** 🎉
 
 ### 2. Set Up Firebase (10 minutes)
 
@@ -16,139 +17,154 @@ Download and install these (if you haven't already):
 2. Create new project called "tokspotter"
 3. Enable Firestore Database (test mode is fine for now)
 4. Get your credentials:
-   - **For backend**: Project Settings → Service Accounts → Generate Private Key
-   - **For frontend**: Project Settings → Your Apps → Add Web App
+   - **Service Account**: Project Settings → Service Accounts → Generate Private Key (save the JSON file)
+   - **Web Config**: Project Settings → Your Apps → Add Web App
 
-### 3. Configure Backend
-
-```bash
-# Open terminal in the project folder
-cd backend
-
-# Create Python virtual environment
-python -m venv venv
-
-# Activate it (Windows)
-venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Copy environment file
-cp .env.example .env
-
-# Edit backend/.env with your Firebase credentials
-# (Use the service account JSON from step 2)
-```
-
-### 4. Configure Frontend
+### 3. Install Dependencies
 
 ```bash
-# Open NEW terminal (keep backend terminal open)
+# Navigate to frontend folder
 cd frontend
 
-# Install dependencies
+# Install all dependencies with pnpm
 pnpm install
 
-# Copy environment file
+# This will install everything including Playwright
+```
+
+### 4. Configure Environment
+
+```bash
+# Copy the example environment file
 cp .env.local.example .env.local
 
-# Edit frontend/.env.local with your Firebase web credentials
+# Now edit .env.local with your Firebase credentials
+```
+
+**In `.env.local`, you need to set:**
+
+```env
+# API URL (leave as localhost:3000)
+NEXT_PUBLIC_API_URL=http://localhost:3000
+
+# Firebase Client Config (from Web App you created)
+NEXT_PUBLIC_FIREBASE_API_KEY=your-web-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
+NEXT_PUBLIC_FIREBASE_APP_ID=your-web-app-id
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# Firebase Admin Config (from Service Account JSON)
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk@your-project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYour full private key from JSON\n-----END PRIVATE KEY-----\n"
 ```
 
 ### 5. Run Everything
 
-**Terminal 1 - Backend:**
 ```bash
-cd backend
-venv\Scripts\activate
-uvicorn app.main:app --reload
-```
-
-**Terminal 2 - Frontend:**
-```bash
-cd frontend
+# From the frontend folder
 pnpm dev
 ```
 
-Then open:
-- **Frontend**: http://localhost:3000
-- **API Docs**: http://localhost:8000/docs
+**That's it!** Open http://localhost:3000
 
 ---
 
 ## 📖 Full Documentation
 
-- **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - Detailed step-by-step setup instructions
-- **[README.md](./README.md)** - Project overview and architecture
+- **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - Detailed setup with troubleshooting
+- **[README.md](./README.md)** - Project overview
 
 ---
 
-## 🏗️ Project Structure
+## 🏗️ Project Structure (TypeScript Only!)
 
 ```
 tokspotter/
-├── backend/                 # FastAPI backend
+├── frontend/                    # Everything is here!
 │   ├── app/
-│   │   ├── api/            # API endpoints
-│   │   ├── core/           # Config, Firebase
-│   │   ├── db/             # Firestore service
-│   │   ├── models/         # Data models
-│   │   ├── scraper/        # TikTok scraper
-│   │   ├── services/       # TrendScore calculator
-│   │   └── main.py         # App entry point
-│   ├── requirements.txt    # Python dependencies
-│   └── .env               # Your config (create this!)
+│   │   ├── page.tsx            # Dashboard
+│   │   ├── layout.tsx          # Root layout
+│   │   ├── globals.css         # Styles
+│   │   └── api/                # Backend API routes
+│   │       ├── health/
+│   │       └── products/
+│   │           ├── trending/
+│   │           ├── search/
+│   │           ├── categories/
+│   │           └── [id]/
+│   ├── components/
+│   │   ├── ProductCard.tsx
+│   │   └── FilterBar.tsx
+│   ├── lib/
+│   │   ├── api-client.ts       # Frontend API client
+│   │   ├── firebase.ts         # Firebase client
+│   │   ├── server/
+│   │   │   └── firebase-admin.ts  # Firebase Admin (server)
+│   │   └── services/
+│   │       ├── firestore-service.ts
+│   │       ├── trend-calculator.ts
+│   │       └── tiktok-scraper.ts
+│   ├── types/
+│   │   └── product.ts
+│   ├── package.json
+│   └── .env.local              # Your config
 │
-├── frontend/               # Next.js frontend
-│   ├── app/               # Pages (Next.js 14 App Router)
-│   ├── components/        # React components
-│   ├── lib/               # API client
-│   ├── types/             # TypeScript types
-│   ├── package.json       # Node dependencies
-│   └── .env.local        # Your config (create this!)
-│
-├── SETUP_GUIDE.md         # Detailed setup instructions
-├── README.md              # Project overview
-└── GETTING_STARTED.md     # This file!
+├── GETTING_STARTED.md          # This file!
+├── SETUP_GUIDE.md
+└── README.md
 ```
 
 ---
 
 ## 🎨 What's Been Built
 
-### Backend (Python/FastAPI)
-- ✅ FastAPI application with CORS
-- ✅ Firebase Admin SDK integration
-- ✅ Product and Shop data models
-- ✅ TrendScore calculation engine
-- ✅ Playwright-based TikTok scraper
-- ✅ REST API endpoints for products
-- ✅ Firestore database service
-
-### Frontend (Next.js/React)
+### All TypeScript/Next.js!
 - ✅ Next.js 15 with App Router
-- ✅ TypeScript throughout
-- ✅ Tailwind CSS styling
-- ✅ Product listing dashboard
-- ✅ Filter and category system
-- ✅ Product cards with trend data
-- ✅ API client for backend communication
+- ✅ API Routes (serverless functions)
+- ✅ Firebase Admin SDK (backend)
+- ✅ Firebase Client SDK (frontend)
+- ✅ TrendScore calculation engine
+- ✅ TikTok scraper with Playwright
+- ✅ Firestore database service
+- ✅ Beautiful UI with Tailwind CSS
+
+---
+
+## 🚀 Running the App
+
+### Development
+
+```bash
+cd frontend
+pnpm dev
+```
+
+- App: http://localhost:3000
+- API: http://localhost:3000/api/health
+
+### Production Build
+
+```bash
+cd frontend
+pnpm build
+pnpm start
+```
 
 ---
 
 ## 🔄 Development Workflow
 
-### Daily Development
-
-1. Start backend: `cd backend && uvicorn app.main:app --reload`
-2. Start frontend: `cd frontend && pnpm dev`
-3. Make changes - both will auto-reload
-
-### Before Committing
+1. **Single terminal** - just run `pnpm dev`
+2. Make changes - auto-reload
+3. Test API at http://localhost:3000/api/health
+4. View dashboard at http://localhost:3000
 
 ```bash
-# From project root
+# Commit changes
 git add .
 git commit -m "Your message"
 git push
@@ -156,87 +172,60 @@ git push
 
 ---
 
-## 🚀 Next Phase: Adding Features
-
-After you have the basic app running, here's what to build next:
-
-1. **Product Scraping Script**
-   - Create scheduled job to scrape TikTok Shop
-   - Update TrendScores daily
-   - Store snapshots in Firestore
-
-2. **Product Detail Page**
-   - Show full analytics
-   - Price/sales history charts
-   - Viability score breakdown
-
-3. **Authentication**
-   - Firebase Auth integration
-   - User accounts
-   - Watchlists per user
-
-4. **Subscription System**
-   - Stripe integration
-   - Free/Starter/Pro tiers
-   - Feature gates
-
-5. **Alerts System**
-   - Email notifications
-   - Trend spike alerts
-   - Custom thresholds
-
----
-
-## 💡 Tips for Success
-
-1. **Start Simple**: Get the basic app running first before adding features
-2. **Test Frequently**: Use the API docs at `/docs` to test endpoints
-3. **Firebase First**: Make sure Firebase connection works before debugging other issues
-4. **Use Real Data**: Once scraper works, everything will look much better
-5. **Iterate**: Don't try to build everything at once
-
----
-
 ## 🐛 Common Issues
 
 ### "Module not found"
-- Backend: Make sure virtual environment is activated
-- Frontend: Run `pnpm install` again
+- Run `pnpm install` in the frontend folder
 
 ### "Firebase authentication error"
-- Double-check credentials in `.env` files
+- Check `.env.local` has all Firebase credentials
 - Make sure private key includes `\n` characters
+- Verify project ID matches in both client and admin configs
 
-### "CORS error"
-- Verify `CORS_ORIGINS` in backend includes `http://localhost:3000`
-- Make sure both servers are running
-
-### "Connection refused"
-- Check backend is running on port 8000
-- Check frontend is running on port 3000
-
----
-
-## 📞 Getting Help
-
-1. Check error messages in terminal
-2. Read [SETUP_GUIDE.md](./SETUP_GUIDE.md) for detailed troubleshooting
-3. Verify all environment variables are set correctly
-4. Make sure Firebase project is created and configured
+### Port already in use
+- Kill the process on port 3000 or use: `pnpm dev -p 3001`
 
 ---
 
 ## ✅ Success Checklist
 
+- [ ] Node.js 18+ installed
+- [ ] pnpm installed globally
 - [ ] Firebase project created
-- [ ] Backend running on http://localhost:8000
-- [ ] Frontend running on http://localhost:3000
-- [ ] API docs accessible at http://localhost:8000/docs
-- [ ] No errors in either terminal
-- [ ] Dashboard loads (even if empty)
+- [ ] Firestore Database enabled
+- [ ] `.env.local` file created with all credentials
+- [ ] `pnpm install` completed
+- [ ] `pnpm dev` running without errors
+- [ ] http://localhost:3000 loads
 
-If all checkboxes are checked, you're ready to start development! 🎉
+If all checked, you're ready! 🎉
 
 ---
 
-**Ready to dive deeper?** Read the full [SETUP_GUIDE.md](./SETUP_GUIDE.md) for deployment instructions and advanced configuration.
+## 🚀 Deploy to Vercel
+
+When you're ready to deploy:
+
+1. Push code to GitHub
+2. Go to https://vercel.com/
+3. Import your repository
+4. Set Root Directory to `frontend`
+5. Add all environment variables from `.env.local`
+6. Click Deploy!
+
+Vercel will:
+- Build your Next.js app
+- Deploy frontend + API routes together
+- Give you a URL like `tokspotter.vercel.app`
+
+---
+
+## 📚 Next Steps
+
+1. **Get it running locally** (follow steps above)
+2. **Test the API** at `/api/health`
+3. **Add test data** to Firestore manually
+4. **Configure scraper** with real TikTok Shop selectors
+5. **Deploy to Vercel**
+
+**Ready for details?** Read [SETUP_GUIDE.md](./SETUP_GUIDE.md) for comprehensive instructions!

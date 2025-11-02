@@ -2,164 +2,260 @@
 
 > Know what's trending on TikTok Shop — before it hits the mainstream.
 
+**Built with TypeScript + Next.js + Firebase**
+
 ## 📋 Prerequisites
 
-Before you begin, ensure you have the following installed:
-
 - **Node.js** (v18 or higher) - [Download here](https://nodejs.org/)
-- **pnpm** (v8 or higher) - [Install guide](https://pnpm.io/installation)
-- **Python** (v3.10 or higher) - [Download here](https://www.python.org/downloads/)
-- **PostgreSQL** (v14 or higher) - [Download here](https://www.postgresql.org/download/)
-- **Git** - [Download here](https://git-scm.com/)
+- **pnpm** (v8 or higher) - Install with: `npm install -g pnpm`
+- **Firebase Account** - [Create free account](https://console.firebase.google.com/)
 
-### Installing pnpm
+**That's it! No Python or database setup required!**
 
-```bash
-# Using npm
-npm install -g pnpm
-
-# Or using PowerShell (Windows)
-iwr https://get.pnpm.io/install.ps1 -useb | iex
-```
-
-## 🛠️ Setup Instructions
-
-### 1. Clone and Initial Setup
+## ⚡ Quick Start
 
 ```bash
-# Navigate to the project directory
-cd tokspotter
-
-# Verify pnpm is installed
-pnpm --version
-```
-
-### 2. Backend Setup (Python/FastAPI)
-
-```bash
-# Navigate to backend directory
-cd backend
-
-# Create Python virtual environment
-python -m venv venv
-
-# Activate virtual environment
-# On Windows:
-venv\Scripts\activate
-# On Mac/Linux:
-source venv/bin/activate
-
-# Install Python dependencies
-pip install -r requirements.txt
-```
-
-### 3. Frontend Setup (Next.js)
-
-```bash
-# Navigate to frontend directory
+# Install dependencies
 cd frontend
-
-# Install dependencies with pnpm
 pnpm install
+
+# Configure environment
+cp .env.local.example .env.local
+# Edit .env.local with your Firebase credentials
 
 # Run development server
 pnpm dev
 ```
 
-### 4. Database Setup
+Open [http://localhost:3000](http://localhost:3000)
 
-```bash
-# Create PostgreSQL database
-createdb tokspotter
+**→ For detailed setup instructions, see [GETTING_STARTED.md](./GETTING_STARTED.md)**
 
-# Run migrations (from backend directory)
-cd backend
-python -m alembic upgrade head
-```
+---
 
-### 5. Environment Variables
+## 🎯 What is TokSpotter?
 
-Create `.env` files in both backend and frontend directories:
+TokSpotter is a **trend intelligence platform** that helps sellers, creators, and marketers discover winning products on TikTok Shop before they go mainstream.
 
-**backend/.env:**
-```env
-DATABASE_URL=postgresql://username:password@localhost:5432/tokspotter
-SECRET_KEY=your-secret-key-here
-ENVIRONMENT=development
-```
+### Key Features
 
-**frontend/.env.local:**
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
+- **🧨 Breakout Detection** - Identify products with explosive growth
+- **🔥 Sustained Winners** - Track consistently performing products
+- **💸 Discount Insights** - Find price-driven trending items
+- **📊 TrendScore Algorithm** - Proprietary scoring system with 5 weighted metrics
+- **🎯 Product Viability Grades** - A-E ratings with plain-English summaries
+- **📈 Historical Analytics** - Price and sales trends over time
+- **🔍 Smart Search & Filters** - Find products by category and criteria
 
-## 🚀 Running the Application
+---
 
-### Development Mode
+## 🏗️ Architecture
 
-**Terminal 1 - Backend:**
-```bash
-cd backend
-venv\Scripts\activate  # Windows
-source venv/bin/activate  # Mac/Linux
-uvicorn app.main:app --reload
-```
-
-**Terminal 2 - Frontend:**
-```bash
-cd frontend
-pnpm dev
-```
-
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
-
-## 📁 Project Structure
+### Full TypeScript Stack
 
 ```
 tokspotter/
-├── backend/              # FastAPI backend
-│   ├── app/
-│   │   ├── api/         # API endpoints
-│   │   ├── core/        # Core config
-│   │   ├── db/          # Database models
-│   │   ├── scraper/     # TikTok scraper
-│   │   ├── services/    # Business logic
-│   │   └── main.py      # App entry point
-│   ├── tests/
-│   ├── requirements.txt
-│   └── .env
-├── frontend/            # Next.js frontend
-│   ├── src/
-│   │   ├── app/        # App router pages
-│   │   ├── components/ # React components
-│   │   ├── lib/        # Utilities
-│   │   └── types/      # TypeScript types
-│   ├── public/
-│   ├── package.json
-│   └── .env.local
-└── README.md
+└── frontend/                    # Next.js app (everything in one place!)
+    ├── app/
+    │   ├── page.tsx            # Dashboard UI
+    │   └── api/                # Backend API routes
+    │       ├── health/
+    │       └── products/       # Product endpoints
+    ├── lib/
+    │   ├── services/           # Business logic
+    │   │   ├── trend-calculator.ts
+    │   │   ├── tiktok-scraper.ts
+    │   │   └── firestore-service.ts
+    │   └── server/
+    │       └── firebase-admin.ts
+    ├── components/             # React components
+    └── types/                  # TypeScript types
 ```
 
-## 🎯 Features
+### Tech Stack
 
-- **Discovery Dashboard** - Live feed of trending TikTok Shop products
-- **Product Analytics** - Deep dive into product metrics and trends
-- **Shop Analytics** - Seller performance insights
-- **Alerts & Watchlists** - Get notified of trend spikes
-- **Commission Insights** - Affiliate opportunity tracking
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | Next.js 15, React 19, TypeScript, Tailwind CSS |
+| **Backend** | Next.js API Routes (serverless functions) |
+| **Database** | Firebase Firestore (NoSQL) |
+| **Auth** | Firebase Authentication (ready to use) |
+| **Scraping** | Playwright + Cheerio |
+| **Deployment** | Vercel (one-click deploy) |
+| **Charts** | Recharts |
+
+---
+
+## 📊 TrendScore Algorithm
+
+Our proprietary algorithm uses **z-score normalization** across 5 key metrics:
+
+```
+TrendScore =
+  z(orders_3d_delta) × 45% +
+  z(acceleration) × 20% +
+  z(price_discount_rate) × 15% +
+  z(reviews_3d_delta) × 10% +
+  z(stock_stability) × 10%
+```
+
+### Product Viability Score (PVS)
+
+Weighted mix of:
+- **35%** Demand momentum (TrendScore percentile)
+- **20%** Sustained interest (28d orders trend)
+- **15%** Price stability (margin potential)
+- **15%** Saturation (duplicate listings)
+- **10%** Sentiment (rating & review growth)
+- **5%** Seasonality (future enhancement)
+
+**Output:** A–E grade + plain-English summary
+
+---
+
+## 🎨 Features in Detail
+
+### Discovery Dashboard
+- Live feed of trending TikTok Shop products
+- Filter by category, price range, viability grade
+- Three trend tabs:
+  - 🧨 **Breakouts** - New spikes
+  - 🔥 **Sustained Winners** - Steady growth
+  - 💸 **Discount-Driven** - Price drop trends
+
+### Product Analytics (Coming Soon)
+- Detailed metrics and trend data
+- Price history charts
+- Sales velocity graphs
+- Viability score breakdown
+- Affiliate commission insights
+
+### Alerts & Watchlists (Planned)
+- Get notified when products spike
+- Save lists for daily/weekly digests
+- Custom threshold alerts
+
+---
+
+## 🚀 Deployment
+
+### Deploy to Vercel (Recommended)
+
+1. Push to GitHub
+2. Import to [Vercel](https://vercel.com/)
+3. Set root directory: `frontend`
+4. Add environment variables from `.env.local`
+5. Deploy!
+
+Vercel handles everything:
+- Next.js build
+- Serverless API routes
+- Edge functions
+- Automatic HTTPS
+
+### Environment Variables for Production
+
+```env
+NEXT_PUBLIC_API_URL=https://your-domain.vercel.app
+# + all Firebase credentials
+```
+
+---
+
+## 💰 Monetization Model (Planned)
+
+| Tier | Price | Features |
+|------|-------|----------|
+| **Free** | $0 | Limited access, 3 products/day |
+| **Starter** | $29/mo | Unlimited browsing, 3 alerts |
+| **Pro** | $79/mo | Full access, unlimited alerts, exports |
+| **Agency** | $199/mo | Team seats, API access, analytics |
+
+---
+
+## 🔄 Development Workflow
+
+```bash
+# Start development server
+cd frontend
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Run production build locally
+pnpm start
+
+# Lint code
+pnpm lint
+```
+
+---
 
 ## 📚 Documentation
 
-- [API Documentation](http://localhost:8000/docs) - Interactive API docs
-- [Architecture Guide](./docs/ARCHITECTURE.md) - System design
-- [Deployment Guide](./docs/DEPLOYMENT.md) - Production deployment
+- **[GETTING_STARTED.md](./GETTING_STARTED.md)** - Quick setup guide
+- **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - Detailed instructions
+- **API Docs** - http://localhost:3000/api/health
+
+---
+
+## 🛠️ API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/health` | GET | Health check |
+| `/api/products/trending` | GET | Get trending products |
+| `/api/products/[id]` | GET | Get product details |
+| `/api/products/search` | GET | Search products |
+| `/api/products/categories` | GET | List categories |
+
+---
+
+## 🎯 Roadmap
+
+### Phase 1 - MVP ✅
+- [x] Product & Shop data models
+- [x] TrendScore calculation engine
+- [x] Web scraper (Playwright)
+- [x] Basic dashboard
+- [x] Firebase integration
+
+### Phase 2 - Features (Next)
+- [ ] Product detail pages with charts
+- [ ] User authentication
+- [ ] Watchlists and alerts
+- [ ] Email notifications
+- [ ] Scheduled scraping (cron jobs)
+
+### Phase 3 - Monetization
+- [ ] Stripe integration
+- [ ] Subscription tiers
+- [ ] User dashboards
+- [ ] Team features
+- [ ] API access
+
+---
 
 ## 🤝 Contributing
 
-This is a personal project. For questions or suggestions, please open an issue.
+This is currently a personal project. For suggestions or bug reports, please open an issue.
+
+---
 
 ## 📄 License
 
 MIT License - See LICENSE file for details
+
+---
+
+## 🆘 Need Help?
+
+1. Check [GETTING_STARTED.md](./GETTING_STARTED.md) for setup
+2. Read [SETUP_GUIDE.md](./SETUP_GUIDE.md) for troubleshooting
+3. Verify Firebase credentials in `.env.local`
+4. Test API health: http://localhost:3000/api/health
+
+---
+
+**Built with ❤️ for TikTok sellers and creators**
