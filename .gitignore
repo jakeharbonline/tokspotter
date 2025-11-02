@@ -37,6 +37,7 @@ yarn-error.log*
 .next/
 out/
 .vercel
+next-env.d.ts
 
 # Environment variables
 .env
