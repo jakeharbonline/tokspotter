@@ -41,6 +41,7 @@ export class FirestoreService {
   async getTrendingProducts(params: {
     limit?: number;
     category?: string;
+    country?: string;
     trend_category?: TrendCategory;
     min_score?: number;
   }): Promise<Product[]> {
@@ -49,6 +50,9 @@ export class FirestoreService {
 
       if (params.category) {
         query = query.where('category', '==', params.category);
+      }
+      if (params.country) {
+        query = query.where('country', '==', params.country);
       }
       if (params.trend_category) {
         query = query.where('trend_category', '==', params.trend_category);

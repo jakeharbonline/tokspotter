@@ -35,6 +35,7 @@ export interface Product {
   category: string;
   shop_id: string;
   shop_name: string;
+  country?: string; // Product origin/target market (US, UK, CA, etc.)
 
   // Current data
   current_price: number;

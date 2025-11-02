@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get('limit') || '50');
     const category = searchParams.get('category') || undefined;
+    const country = searchParams.get('country') || undefined;
     const trendCategory = searchParams.get('trend_category') as TrendCategory | undefined;
     const minScore = parseFloat(searchParams.get('min_score') || '0');
 
@@ -14,6 +15,7 @@ export async function GET(request: NextRequest) {
     const products = await db.getTrendingProducts({
       limit,
       category,
+      country,
       trend_category: trendCategory,
       min_score: minScore,
     });

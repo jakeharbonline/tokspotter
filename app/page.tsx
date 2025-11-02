@@ -11,6 +11,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TrendCategory | "all">("all");
   const [category, setCategory] = useState<string | null>(null);
+  const [country, setCountry] = useState<string | null>(null);
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
@@ -19,6 +20,7 @@ export default function Home() {
         limit: 50,
         trend_category: activeTab !== "all" ? activeTab : undefined,
         category: category || undefined,
+        country: country || undefined,
       });
       setProducts(data);
     } catch (error) {
@@ -26,7 +28,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [activeTab, category]);
+  }, [activeTab, category, country]);
 
   useEffect(() => {
     loadProducts();
@@ -85,7 +87,7 @@ export default function Home() {
 
       {/* Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <FilterBar onCategoryChange={setCategory} />
+        <FilterBar onCategoryChange={setCategory} onCountryChange={setCountry} />
       </div>
 
       {/* Products Grid */}

@@ -5,6 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 interface GetTrendingProductsParams {
   limit?: number;
   category?: string;
+  country?: string;
   trend_category?: TrendCategory;
   min_score?: number;
   viability_grade?: ViabilityGrade;
@@ -45,6 +46,7 @@ class ApiClient {
 
     if (params.limit) queryParams.set("limit", params.limit.toString());
     if (params.category) queryParams.set("category", params.category);
+    if (params.country) queryParams.set("country", params.country);
     if (params.trend_category) queryParams.set("trend_category", params.trend_category);
     if (params.min_score) queryParams.set("min_score", params.min_score.toString());
     if (params.viability_grade) queryParams.set("viability_grade", params.viability_grade);
