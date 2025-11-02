@@ -2,7 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['p16-sign-sg.tiktokcdn.com', 'p16-sign.tiktokcdn.com'], // TikTok CDN domains
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'p16-sign-sg.tiktokcdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'p16-sign.tiktokcdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+      },
+    ],
   },
   reactStrictMode: true,
 };

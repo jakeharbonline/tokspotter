@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TikTokScraper } from '@/lib/services/tiktok-scraper';
+import { TikTokApiScraper } from '@/lib/services/tiktok-api-scraper';
 import { FirestoreService } from '@/lib/services/firestore-service';
 import { TrendCalculator } from '@/lib/services/trend-calculator';
 
@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
   console.log('🤖 Starting automated scrape job...');
   const startTime = Date.now();
 
-  const scraper = new TikTokScraper();
+  const scraper = new TikTokApiScraper();
   const db = new FirestoreService();
 
   const results = {
@@ -119,8 +119,6 @@ export async function GET(request: NextRequest) {
   };
 
   try {
-    await scraper.initialize();
-
     // If no targets configured, return early
     if (SCRAPE_TARGETS.length === 0) {
       return NextResponse.json({
@@ -138,7 +136,7 @@ export async function GET(request: NextRequest) {
         if (target.includes('/category/') || target.includes('/shop/')) {
           // Scrape category to get product URLs (50 per category for comprehensive coverage)
           console.log(`📂 Scraping category: ${target}`);
-          productUrls = await scraper.scrapeCategory(target, 50);
+          productUrls = await scraper.getCategoryProducts(target, 50);
         } else {
           // Direct product URL
           productUrls = [target];
@@ -223,8 +221,6 @@ export async function GET(request: NextRequest) {
       },
       { status: 500 }
     );
-  } finally {
-    await scraper.close();
   }
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
