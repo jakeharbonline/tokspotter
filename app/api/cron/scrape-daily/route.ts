@@ -8,16 +8,84 @@ import { TrendCalculator } from '@/lib/services/trend-calculator';
  * Scrapes TikTok Shop trending page and updates product database
  */
 
-// Product URLs to scrape automatically
-// These can be trending pages, category pages, or specific product lists
+// All TikTok Shop Categories - Comprehensive Coverage
 const SCRAPE_TARGETS = [
-  // Category URLs (scraper will extract product links from these)
-  // 'https://www.tiktok.com/shop/category/beauty',
-  // 'https://www.tiktok.com/shop/category/home',
-  // 'https://www.tiktok.com/shop/category/fashion',
+  // Beauty & Personal Care
+  'https://www.tiktok.com/shop/category/beauty',
+  'https://www.tiktok.com/shop/category/skincare',
+  'https://www.tiktok.com/shop/category/makeup',
+  'https://www.tiktok.com/shop/category/hair-care',
+  'https://www.tiktok.com/shop/category/fragrance',
 
-  // Or specific product URLs
-  // Add real TikTok Shop product URLs here
+  // Fashion & Accessories
+  'https://www.tiktok.com/shop/category/fashion',
+  'https://www.tiktok.com/shop/category/womens-clothing',
+  'https://www.tiktok.com/shop/category/mens-clothing',
+  'https://www.tiktok.com/shop/category/shoes',
+  'https://www.tiktok.com/shop/category/bags',
+  'https://www.tiktok.com/shop/category/jewelry',
+  'https://www.tiktok.com/shop/category/accessories',
+
+  // Home & Living
+  'https://www.tiktok.com/shop/category/home',
+  'https://www.tiktok.com/shop/category/kitchen',
+  'https://www.tiktok.com/shop/category/bedding',
+  'https://www.tiktok.com/shop/category/furniture',
+  'https://www.tiktok.com/shop/category/decor',
+  'https://www.tiktok.com/shop/category/storage',
+
+  // Electronics & Tech
+  'https://www.tiktok.com/shop/category/electronics',
+  'https://www.tiktok.com/shop/category/phones',
+  'https://www.tiktok.com/shop/category/computers',
+  'https://www.tiktok.com/shop/category/gaming',
+  'https://www.tiktok.com/shop/category/audio',
+  'https://www.tiktok.com/shop/category/cameras',
+
+  // Health & Fitness
+  'https://www.tiktok.com/shop/category/health',
+  'https://www.tiktok.com/shop/category/fitness',
+  'https://www.tiktok.com/shop/category/wellness',
+  'https://www.tiktok.com/shop/category/vitamins',
+
+  // Toys & Hobbies
+  'https://www.tiktok.com/shop/category/toys',
+  'https://www.tiktok.com/shop/category/games',
+  'https://www.tiktok.com/shop/category/hobbies',
+  'https://www.tiktok.com/shop/category/crafts',
+
+  // Sports & Outdoors
+  'https://www.tiktok.com/shop/category/sports',
+  'https://www.tiktok.com/shop/category/outdoor',
+  'https://www.tiktok.com/shop/category/camping',
+
+  // Baby & Kids
+  'https://www.tiktok.com/shop/category/baby',
+  'https://www.tiktok.com/shop/category/kids',
+  'https://www.tiktok.com/shop/category/maternity',
+
+  // Pet Supplies
+  'https://www.tiktok.com/shop/category/pets',
+  'https://www.tiktok.com/shop/category/pet-food',
+  'https://www.tiktok.com/shop/category/pet-toys',
+
+  // Books & Media
+  'https://www.tiktok.com/shop/category/books',
+  'https://www.tiktok.com/shop/category/media',
+
+  // Food & Beverages
+  'https://www.tiktok.com/shop/category/food',
+  'https://www.tiktok.com/shop/category/beverages',
+  'https://www.tiktok.com/shop/category/snacks',
+
+  // Automotive
+  'https://www.tiktok.com/shop/category/automotive',
+  'https://www.tiktok.com/shop/category/car-accessories',
+
+  // Office & School
+  'https://www.tiktok.com/shop/category/office',
+  'https://www.tiktok.com/shop/category/school-supplies',
+  'https://www.tiktok.com/shop/category/stationery',
 ];
 
 // Countries to scrape (can scrape different regional TikTok Shops)
@@ -68,9 +136,9 @@ export async function GET(request: NextRequest) {
 
         // Check if target is a category/listing page or direct product
         if (target.includes('/category/') || target.includes('/shop/')) {
-          // Scrape category to get product URLs
+          // Scrape category to get product URLs (10 per category for comprehensive coverage)
           console.log(`📂 Scraping category: ${target}`);
-          productUrls = await scraper.scrapeCategory(target, 20);
+          productUrls = await scraper.scrapeCategory(target, 10);
         } else {
           // Direct product URL
           productUrls = [target];
