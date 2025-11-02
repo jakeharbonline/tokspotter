@@ -3,10 +3,10 @@ import { FirestoreService } from '@/lib/services/firestore-service';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const productId = params.id;
+    const { id: productId } = await params;
     const db = new FirestoreService();
 
     const product = await db.getProduct(productId);
