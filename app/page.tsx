@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Product, TrendCategory } from "@/types/product";
 import ProductCard from "@/components/ProductCard";
 import FilterBar from "@/components/FilterBar";
@@ -12,11 +12,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<TrendCategory | "all">("all");
   const [category, setCategory] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadProducts();
-  }, [activeTab, category]);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     setLoading(true);
     try {
       const data = await apiClient.getTrendingProducts({
@@ -30,7 +26,11 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab, category]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   return (
     <div className="min-h-screen bg-gray-50">
