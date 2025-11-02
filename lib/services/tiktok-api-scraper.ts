@@ -131,7 +131,7 @@ export class TikTokApiScraper {
       const html = await response.text();
 
       // Extract JSON data from __UNIVERSAL_DATA_FOR_REHYDRATION__ script tag
-      const dataMatch = html.match(/__UNIVERSAL_DATA_FOR_REHYDRATION__\s*=\s*({.+?})\s*;/s);
+      const dataMatch = html.match(/__UNIVERSAL_DATA_FOR_REHYDRATION__[\s\S]*?=[\s\S]*?(\{[\s\S]+?\})[\s\S]*?;/);
 
       if (!dataMatch) {
         console.warn(`Could not find product data in page`);
