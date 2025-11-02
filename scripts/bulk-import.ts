@@ -24,7 +24,7 @@ if (getApps().length === 0) {
  * Add your TikTok Shop product URLs here
  * Find products on: https://www.tiktok.com (Shop section)
  */
-const PRODUCT_URLS = [
+const PRODUCT_URLS: string[] = [
   // Format: 'https://www.tiktok.com/view/product/[PRODUCT_ID]',
   // Example URLs (replace with real ones):
   // 'https://www.tiktok.com/view/product/1729762527861968902',

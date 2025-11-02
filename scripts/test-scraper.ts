@@ -5,7 +5,7 @@
 
 import { TikTokScraper } from '../lib/services/tiktok-scraper';
 
-const TEST_URLS = [
+const TEST_URLS: string[] = [
   // Add real TikTok Shop product URLs here
   // Format: https://www.tiktok.com/view/product/[PRODUCT_ID]
   // Example: 'https://www.tiktok.com/view/product/1729762527861968902',
