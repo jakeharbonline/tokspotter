@@ -1,41 +1,67 @@
-import { NextResponse } from 'next/server';
-import { TikTokApiScraper } from '@/lib/services/tiktok-api-scraper';
+import { NextRequest, NextResponse } from 'next/server';
+import { TikTokScraper } from '@/lib/services/tiktok-scraper';
 
 /**
- * Test endpoint for new API scraper
- * GET /api/scrape/test
+ * Test endpoint to scrape a single TikTok Shop product
+ * Usage: POST /api/scrape/test with body: { "url": "https://www.tiktok.com/view/product/..." }
  */
-export async function GET() {
+export async function POST(request: NextRequest) {
   try {
-    const scraper = new TikTokApiScraper();
+    const body = await request.json();
+    const { url } = body;
 
-    // Test with a simple search
-    console.log('Testing TikTok API scraper...');
+    if (!url) {
+      return NextResponse.json(
+        { error: 'Missing "url" in request body' },
+        { status: 400 }
+      );
+    }
 
-    const productUrls = await scraper.searchProducts('beauty', 5);
+    console.log(`🧪 Testing scraper with: ${url}`);
 
-    if (productUrls.length === 0) {
-      return NextResponse.json({
-        success: false,
-        message: 'No products found - API may have changed structure',
-        urls: [],
-      });
+    const scraper = new TikTokScraper();
+    const product = await scraper.scrapeProduct(url);
+
+    if (!product) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Failed to scrape product',
+          url,
+        },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
       success: true,
-      message: `Found ${productUrls.length} products`,
-      urls: productUrls,
-      note: 'API scraper is working!',
+      message: 'Successfully scraped product',
+      product,
     });
   } catch (error) {
+    console.error('❌ Test scrape error:', error);
     return NextResponse.json(
       {
         success: false,
         error: String(error),
-        message: 'API scraper test failed',
       },
       { status: 500 }
     );
   }
+}
+
+export async function GET() {
+  return NextResponse.json({
+    message: 'POST a TikTok Shop product URL to test the scraper',
+    example: {
+      method: 'POST',
+      body: {
+        url: 'https://www.tiktok.com/view/product/1234567890',
+      },
+    },
+    requirements: {
+      env: 'SCRAPERAPI_KEY must be set',
+      signup: 'https://www.scraperapi.com (1,000 free requests/month)',
+    },
+  });
 }
