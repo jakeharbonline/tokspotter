@@ -1,6 +1,5 @@
 import { Product } from "@/types/product";
 import Link from "next/link";
-import Image from "next/image";
 
 interface ProductCardProps {
   product: Product;
@@ -48,14 +47,12 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Link href={`/product/${product.id}`}>
       <div className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-200 overflow-hidden cursor-pointer group">
         {/* Image */}
-        <div className="relative h-48 bg-gray-100">
+        <div className="relative h-48 bg-gray-100 overflow-hidden">
           {product.image_url ? (
-            <Image
+            <img
               src={product.image_url}
               alt={product.title}
-              fill
-              unoptimized
-              className="object-cover group-hover:scale-105 transition-transform duration-200"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
