@@ -141,13 +141,20 @@ export default function Home() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                🚀 TokSpotter
-              </h1>
-              <p className="mt-1 text-sm text-gray-500">
-                The Radar for TikTok Shop Trends
-              </p>
+            <div className="flex items-center gap-4">
+              <img
+                src="/tokspotter.png"
+                alt="TokSpotter Logo"
+                className="h-12 w-12 object-contain"
+              />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  TokSpotter
+                </h1>
+                <p className="mt-1 text-sm text-gray-500">
+                  The Radar for TikTok Shop Trends
+                </p>
+              </div>
             </div>
             <button className="bg-tiktok-primary text-white px-4 py-2 rounded-lg hover:bg-tiktok-primary/90 transition">
               Sign In

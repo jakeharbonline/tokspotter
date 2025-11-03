@@ -8,6 +8,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "TokSpotter - The Radar for TikTok Shop Trends",
   description: "Know what's trending on TikTok Shop before it hits the mainstream",
+  icons: {
+    icon: "/tokspotter.png",
+    apple: "/tokspotter.png",
+  },
 };
 
 export default function RootLayout({
