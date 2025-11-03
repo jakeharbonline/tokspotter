@@ -393,19 +393,20 @@ export function generateMockProducts(count: number = 50): Product[] {
       acceleration,
       trend_score: 70 + Math.random() * 25,
       trend_category: trendCategory,
-      confidence_score: 0.85 + Math.random() * 0.1,
+      confidence_score: 0.88 + Math.random() * 0.1, // Higher confidence for demo
       has_affiliate_program: true,
-      commission_rate: 0.08 + Math.random() * 0.12, // 8-20% commission
+      commission_rate: 0.12 + Math.random() * 0.08, // 12-20% commission (demo boost)
 
       // Calculate Opportunity Score (0-100)
       // Factors: trend score, commission rate, acceleration, low saturation, good rating
+      // Boosted for demo - making products look more attractive!
       opportunity_score: calculateOpportunityScore({
-        trendScore: 70 + Math.random() * 25,
-        commissionRate: 0.08 + Math.random() * 0.12, // 8-20% commission
-        acceleration,
-        rating: 4.3 + Math.random() * 0.6,
+        trendScore: 80 + Math.random() * 18, // 80-98 (higher trending scores)
+        commissionRate: 0.12 + Math.random() * 0.08, // 12-20% commission (better rates)
+        acceleration: acceleration * 1.3, // Boost acceleration
+        rating: 4.5 + Math.random() * 0.5, // 4.5-5.0 (better ratings)
         soldCount: sales,
-        discountRate,
+        discountRate: Math.max(discountRate, 0.15), // At least 15% discount
         velocity: Math.floor(orders3d / 3),
       }),
 
