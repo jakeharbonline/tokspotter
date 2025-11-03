@@ -395,6 +395,19 @@ export function generateMockProducts(count: number = 50): Product[] {
       trend_category: trendCategory,
       confidence_score: 0.85 + Math.random() * 0.1,
       has_affiliate_program: true,
+
+      // Calculate Opportunity Score (0-100)
+      // Factors: trend score, commission rate, acceleration, low saturation, good rating
+      opportunity_score: calculateOpportunityScore({
+        trendScore,
+        commissionRate,
+        acceleration,
+        rating,
+        soldCount,
+        discountRate,
+        velocity: velocity3d,
+      }),
+
       first_seen: now,
       last_updated: now,
       snapshot_count: 0,
@@ -402,4 +415,54 @@ export function generateMockProducts(count: number = 50): Product[] {
   }
 
   return products;
+}
+
+// Calculate Opportunity Score: How good is this product to start selling NOW
+function calculateOpportunityScore(params: {
+  trendScore: number;
+  commissionRate: number;
+  acceleration: number;
+  rating: number;
+  soldCount: number;
+  discountRate: number;
+  velocity: number;
+}): number {
+  const {
+    trendScore,
+    commissionRate,
+    acceleration,
+    rating,
+    soldCount,
+    discountRate,
+    velocity,
+  } = params;
+
+  // Trending momentum (0-30 points)
+  const trendingPoints = Math.min(30, (trendScore / 100) * 30);
+
+  // Commission attractiveness (0-20 points)
+  const commissionPoints = Math.min(20, commissionRate * 100 * 2);
+
+  // Growth potential - High acceleration is good (0-20 points)
+  const growthPoints = Math.min(20, (acceleration / 3) * 20);
+
+  // Product quality - Good rating matters (0-15 points)
+  const qualityPoints = (rating / 5) * 15;
+
+  // Market opportunity - Not too saturated (0-10 points)
+  // Lower sold count = higher opportunity (less competition)
+  const saturationPoints = soldCount < 10000 ? 10 : soldCount < 50000 ? 7 : soldCount < 100000 ? 4 : 2;
+
+  // Discount attractiveness (0-5 points)
+  const discountPoints = Math.min(5, discountRate * 10);
+
+  const totalScore =
+    trendingPoints +
+    commissionPoints +
+    growthPoints +
+    qualityPoints +
+    saturationPoints +
+    discountPoints;
+
+  return Math.round(Math.min(100, Math.max(0, totalScore)));
 }

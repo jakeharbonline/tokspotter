@@ -3,36 +3,126 @@
 import { useState, useEffect, useCallback } from "react";
 import { Product, TrendCategory } from "@/types/product";
 import ProductCard from "@/components/ProductCard";
-import FilterBar from "@/components/FilterBar";
+import FilterBar, { Filters } from "@/components/FilterBar";
 import { apiClient } from "@/lib/api-client";
 
 export default function Home() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TrendCategory | "all">("all");
-  const [category, setCategory] = useState<string | null>(null);
-  const [country, setCountry] = useState<string | null>(null);
+  const [filters, setFilters] = useState<Filters>({
+    category: null,
+    country: null,
+    minPrice: null,
+    maxPrice: null,
+    minCommission: null,
+    minSales: null,
+    minRating: null,
+    inStockOnly: false,
+    hasAffiliate: false,
+    minDiscount: null,
+    sortBy: 'opportunity',
+  });
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
     try {
       const data = await apiClient.getTrendingProducts({
-        limit: 50,
+        limit: 200,
         trend_category: activeTab !== "all" ? activeTab : undefined,
-        category: category || undefined,
-        country: country || undefined,
       });
-      setProducts(data);
+      setAllProducts(data);
     } catch (error) {
       console.error("Error loading products:", error);
     } finally {
       setLoading(false);
     }
-  }, [activeTab, category, country]);
+  }, [activeTab]);
 
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
+
+  // Apply filters and sorting
+  useEffect(() => {
+    let result = [...allProducts];
+
+    // Apply category filter
+    if (filters.category) {
+      result = result.filter(p => p.category === filters.category);
+    }
+
+    // Apply country filter
+    if (filters.country) {
+      result = result.filter(p => p.country === filters.country);
+    }
+
+    // Apply price filters
+    if (filters.minPrice !== null) {
+      result = result.filter(p => p.current_price >= filters.minPrice!);
+    }
+    if (filters.maxPrice !== null) {
+      result = result.filter(p => p.current_price <= filters.maxPrice!);
+    }
+
+    // Apply commission filter
+    if (filters.minCommission !== null) {
+      result = result.filter(p => (p.commission_rate || 0) * 100 >= filters.minCommission!);
+    }
+
+    // Apply sales filter
+    if (filters.minSales !== null) {
+      result = result.filter(p => p.sold_count >= filters.minSales!);
+    }
+
+    // Apply rating filter
+    if (filters.minRating !== null) {
+      result = result.filter(p => p.rating >= filters.minRating!);
+    }
+
+    // Apply discount filter
+    if (filters.minDiscount !== null) {
+      result = result.filter(p => {
+        const discount = p.original_price ? ((p.original_price - p.current_price) / p.original_price) * 100 : 0;
+        return discount >= filters.minDiscount!;
+      });
+    }
+
+    // Apply in-stock filter
+    if (filters.inStockOnly) {
+      result = result.filter(p => p.in_stock);
+    }
+
+    // Apply affiliate filter
+    if (filters.hasAffiliate) {
+      result = result.filter(p => p.has_affiliate_program && p.commission_rate && p.commission_rate > 0);
+    }
+
+    // Apply sorting
+    switch (filters.sortBy) {
+      case 'opportunity':
+        result.sort((a, b) => (b.opportunity_score || 0) - (a.opportunity_score || 0));
+        break;
+      case 'commission':
+        result.sort((a, b) => (b.commission_rate || 0) - (a.commission_rate || 0));
+        break;
+      case 'sales':
+        result.sort((a, b) => b.sold_count - a.sold_count);
+        break;
+      case 'trending':
+        result.sort((a, b) => b.trend_score - a.trend_score);
+        break;
+      case 'price_low':
+        result.sort((a, b) => a.current_price - b.current_price);
+        break;
+      case 'price_high':
+        result.sort((a, b) => b.current_price - a.current_price);
+        break;
+    }
+
+    setFilteredProducts(result);
+  }, [allProducts, filters]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -87,7 +177,7 @@ export default function Home() {
 
       {/* Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <FilterBar onCategoryChange={setCategory} onCountryChange={setCountry} />
+        <FilterBar onFiltersChange={setFilters} />
       </div>
 
       {/* Products Grid */}
@@ -102,7 +192,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-        ) : products.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">No products found</p>
             <p className="text-gray-400 text-sm mt-2">
@@ -110,11 +200,16 @@ export default function Home() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            <div className="mb-4 text-sm text-gray-600">
+              Showing {filteredProducts.length} of {allProducts.length} products
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </>
         )}
       </main>
 
