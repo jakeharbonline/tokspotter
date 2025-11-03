@@ -75,6 +75,9 @@ export interface Product {
   commission_rate?: number;
   has_affiliate_program: boolean;
 
+  // Opportunity Score (0-100) - How good is this product to start selling now
+  opportunity_score?: number;
+
   // Metadata
   first_seen: string;
   last_updated: string;
