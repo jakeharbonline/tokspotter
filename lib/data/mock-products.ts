@@ -4,7 +4,7 @@
  * Used for development and demo purposes
  */
 
-import { Product } from '@/types/product';
+import { Product, TrendCategory } from '@/types/product';
 
 export const MOCK_PRODUCTS: Omit<Product, 'first_seen' | 'last_updated'>[] = [
   // Beauty & Personal Care
@@ -31,6 +31,7 @@ export const MOCK_PRODUCTS: Omit<Product, 'first_seen' | 'last_updated'>[] = [
     velocity_3d: 780,
     acceleration: 1.8,
     trend_score: 87.5,
+    trend_category: TrendCategory.SUSTAINED,
     confidence_score: 0.95,
     has_affiliate_program: true,
     snapshot_count: 0,
@@ -58,6 +59,7 @@ export const MOCK_PRODUCTS: Omit<Product, 'first_seen' | 'last_updated'>[] = [
     velocity_3d: 1520,
     acceleration: 2.3,
     trend_score: 92.1,
+    trend_category: TrendCategory.BREAKOUT,
     confidence_score: 0.98,
     has_affiliate_program: true,
     snapshot_count: 0,
@@ -85,6 +87,7 @@ export const MOCK_PRODUCTS: Omit<Product, 'first_seen' | 'last_updated'>[] = [
     velocity_3d: 1040,
     acceleration: 1.9,
     trend_score: 88.7,
+    trend_category: TrendCategory.SUSTAINED,
     confidence_score: 0.96,
     has_affiliate_program: true,
     snapshot_count: 0,
@@ -114,6 +117,7 @@ export const MOCK_PRODUCTS: Omit<Product, 'first_seen' | 'last_updated'>[] = [
     velocity_3d: 963,
     acceleration: 2.1,
     trend_score: 89.3,
+    trend_category: TrendCategory.BREAKOUT,
     confidence_score: 0.94,
     has_affiliate_program: true,
     snapshot_count: 0,
@@ -352,6 +356,18 @@ export function generateMockProducts(count: number = 50): Product[] {
     const orders3d = Math.floor(sales * (0.05 + Math.random() * 0.1));
     const orders7d = Math.floor(orders3d * (1.5 + Math.random()));
     const reviews3d = Math.floor(reviews * (0.02 + Math.random() * 0.05));
+    const acceleration = 1.2 + Math.random() * 1.5;
+    const discountRate = (originalPrice - price) / originalPrice;
+
+    // Assign trend category based on characteristics
+    let trendCategory: TrendCategory;
+    if (discountRate > 0.35) {
+      trendCategory = TrendCategory.DISCOUNT_DRIVEN;
+    } else if (acceleration > 2.2) {
+      trendCategory = TrendCategory.BREAKOUT;
+    } else {
+      trendCategory = TrendCategory.SUSTAINED;
+    }
 
     products.push({
       id: `mock-${Date.now()}-${i}`,
@@ -371,11 +387,12 @@ export function generateMockProducts(count: number = 50): Product[] {
       country: 'US',
       orders_3d_delta: orders3d,
       orders_7d_delta: orders7d,
-      price_discount_rate: (originalPrice - price) / originalPrice,
+      price_discount_rate: discountRate,
       reviews_3d_delta: reviews3d,
       velocity_3d: Math.floor(orders3d / 3),
-      acceleration: 1.2 + Math.random() * 1.5,
+      acceleration,
       trend_score: 70 + Math.random() * 25,
+      trend_category: trendCategory,
       confidence_score: 0.85 + Math.random() * 0.1,
       has_affiliate_program: true,
       first_seen: now,
