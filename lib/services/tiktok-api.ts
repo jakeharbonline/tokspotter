@@ -54,15 +54,17 @@ export class TikTokShopAPI {
   private baseUrl: string;
 
   constructor() {
+    const region = (process.env.TIKTOK_REGION as 'US' | 'UK' | 'SEA') || 'US';
+
     this.config = {
       appId: process.env.TIKTOK_APP_ID || '',
       appSecret: process.env.TIKTOK_APP_SECRET || '',
       accessToken: process.env.TIKTOK_ACCESS_TOKEN || '',
-      region: (process.env.TIKTOK_REGION as 'US' | 'UK' | 'SEA') || 'US',
+      region,
     };
 
     // Set base URL based on region
-    this.baseUrl = this.getBaseUrl(this.config.region);
+    this.baseUrl = this.getBaseUrl(region);
 
     if (!this.config.appId || !this.config.appSecret) {
       console.warn('⚠️  TikTok API credentials not set');
