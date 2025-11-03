@@ -399,7 +399,7 @@ export function generateMockProducts(count: number = 50): Product[] {
       // Calculate Opportunity Score (0-100)
       // Factors: trend score, commission rate, acceleration, low saturation, good rating
       opportunity_score: calculateOpportunityScore({
-        trendScore,
+        trendScore: 70 + Math.random() * 25,
         commissionRate,
         acceleration,
         rating,
