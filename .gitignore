@@ -68,8 +68,8 @@ playwright/.cache/
 test-results/
 playwright-report/
 
-# Data files
-data/
+# Data files (exclude user-generated data, but include code)
+/data/
 *.csv
 *.json.bak
 
