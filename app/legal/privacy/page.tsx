@@ -112,7 +112,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. TikTok API Compliance and Data Protection</h2>
             <p className="text-gray-700 leading-relaxed mb-3">
-              TokSpotter operates in full compliance with TikTok's Developer Terms and API guidelines:
+              TokSpotter operates in full compliance with TikTok&apos;s Developer Terms and API guidelines:
             </p>
 
             <div className="bg-green-50 border-l-4 border-green-500 p-4 my-4">
@@ -282,8 +282,8 @@ export default function PrivacyPolicy() {
               Our service integrates with third-party services that have their own privacy policies:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li><strong>TikTok:</strong> Subject to TikTok's Privacy Policy and Terms of Service</li>
-              <li><strong>Google Cloud Platform/Firebase:</strong> Subject to Google's Privacy Policy</li>
+              <li><strong>TikTok:</strong> Subject to TikTok&apos;s Privacy Policy and Terms of Service</li>
+              <li><strong>Google Cloud Platform/Firebase:</strong> Subject to Google&apos;s Privacy Policy</li>
               <li><strong>Payment Processors:</strong> Subject to their respective privacy policies</li>
             </ul>
             <p className="text-gray-700 leading-relaxed mt-3">
@@ -293,7 +293,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Children's Privacy</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">10. Children&apos;s Privacy</h2>
             <p className="text-gray-700 leading-relaxed">
               TokSpotter is not intended for users under the age of 18. We do not knowingly collect personal information
               from children under 18. If we become aware that we have collected personal information from a child under
@@ -341,7 +341,7 @@ export default function PrivacyPolicy() {
               legal requirements, or other factors. We will notify you of significant changes by:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Posting the updated policy on this page with a new "Last Updated" date</li>
+              <li>Posting the updated policy on this page with a new &quot;Last Updated&quot; date</li>
               <li>Sending an email notification to registered users</li>
               <li>Displaying a prominent notice on our service</li>
             </ul>
@@ -374,7 +374,7 @@ export default function PrivacyPolicy() {
                 TikTok API Compliance Statement
               </p>
               <p className="text-sm text-blue-900">
-                TokSpotter is committed to full compliance with TikTok's Developer Terms, API Guidelines, and Data
+                TokSpotter is committed to full compliance with TikTok&apos;s Developer Terms, API Guidelines, and Data
                 Protection requirements. We operate transparently, respect user privacy, and implement the highest
                 standards of data security. We only access publicly available TikTok Shop product data and never
                 collect or process personally identifiable information of TikTok users.

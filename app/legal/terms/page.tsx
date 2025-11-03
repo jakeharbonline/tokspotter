@@ -38,7 +38,7 @@ export default function TermsOfService() {
               <li>Market intelligence for e-commerce decision making</li>
             </ul>
             <p className="text-gray-700 leading-relaxed mt-3">
-              TokSpotter integrates with TikTok Shop's official API to provide publicly available product information.
+              TokSpotter integrates with TikTok Shop&apos;s official API to provide publicly available product information.
               We do not access, collect, or process any personally identifiable information (PII) of TikTok users.
             </p>
           </section>
@@ -60,14 +60,14 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Data Usage and TikTok API Compliance</h2>
             <p className="text-gray-700 leading-relaxed mb-3">
-              TokSpotter operates in full compliance with TikTok's Developer Terms of Service and API guidelines:
+              TokSpotter operates in full compliance with TikTok&apos;s Developer Terms of Service and API guidelines:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
               <li><strong>Public Data Only:</strong> We only access publicly available product information from TikTok Shop</li>
               <li><strong>No Personal Data:</strong> We do not collect, process, or store any personally identifiable information (PII) of TikTok users or creators</li>
               <li><strong>No Watermark Removal:</strong> We respect all creator copyright mechanisms and do not remove watermarks or attribution</li>
               <li><strong>API Rate Limits:</strong> We adhere to all TikTok API rate limits and usage guidelines</li>
-              <li><strong>Data Security:</strong> All data obtained through TikTok's API is stored securely and protected with industry-standard safeguards</li>
+              <li><strong>Data Security:</strong> All data obtained through TikTok&apos;s API is stored securely and protected with industry-standard safeguards</li>
               <li><strong>No Data Sharing:</strong> We do not share TikTok-sourced data with third parties without explicit authorization</li>
             </ul>
           </section>
@@ -105,7 +105,7 @@ export default function TermsOfService() {
             <p className="text-gray-700 leading-relaxed">
               While we strive to provide accurate and up-to-date information, TokSpotter makes no warranties or
               representations about the accuracy, completeness, or reliability of any product data, trends, or analytics.
-              All information is provided "as is" and should be independently verified before making business decisions.
+              All information is provided &quot;as is&quot; and should be independently verified before making business decisions.
               We are not responsible for any decisions made based on information provided by our service.
             </p>
           </section>
@@ -159,7 +159,7 @@ export default function TermsOfService() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">12. Changes to Terms</h2>
             <p className="text-gray-700 leading-relaxed">
               We reserve the right to modify these Terms at any time. We will provide notice of significant changes
-              by posting the new Terms on this page and updating the "Last Updated" date. Your continued use of the
+              by posting the new Terms on this page and updating the &quot;Last Updated&quot; date. Your continued use of the
               service after changes become effective constitutes acceptance of the new Terms.
             </p>
           </section>
