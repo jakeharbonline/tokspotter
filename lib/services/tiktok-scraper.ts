@@ -63,7 +63,8 @@ export class TikTokScraper {
   }
 
   /**
-   * Discover product URLs from TikTok Shop category page
+   * Discover top trending product URLs from TikTok Shop category page
+   * Filters for: Best Sellers, High Reviews, Trending, Viral
    */
   async discoverProducts(categoryUrl: string, limit: number = 50): Promise<string[]> {
     if (!this.apiKey) {
@@ -72,29 +73,47 @@ export class TikTokScraper {
     }
 
     try {
-      console.log(`🔍 Discovering products from: ${categoryUrl}`);
+      console.log(`🔍 Discovering trending products from: ${categoryUrl}`);
 
-      // Scrape category page
-      const scraperUrl = new URL(this.baseUrl);
-      scraperUrl.searchParams.set('api_key', this.apiKey);
-      scraperUrl.searchParams.set('url', categoryUrl);
-      scraperUrl.searchParams.set('render', 'true');
+      // Try multiple sorting options to get the best products
+      const sortOptions = [
+        'sort_by=best_selling',   // Best sellers (proven winners)
+        'sort_by=trending',        // Trending products (current hot items)
+        'sort_by=top_rated',       // Highest rated (quality products)
+        'sort_by=newest',          // New arrivals (upcoming/emerging trends)
+        'sort_by=price_low',       // Budget-friendly (viral potential)
+      ];
 
-      const response = await fetch(scraperUrl.toString());
+      const allProductUrls = new Set<string>();
 
-      if (!response.ok) {
-        console.error(`❌ ScraperAPI returned ${response.status}`);
-        return [];
+      for (const sortOption of sortOptions) {
+        const url = `${categoryUrl}?${sortOption}`;
+
+        console.log(`  🎯 Fetching: ${sortOption.replace('sort_by=', '')}`);
+
+        const scraperUrl = new URL(this.baseUrl);
+        scraperUrl.searchParams.set('api_key', this.apiKey);
+        scraperUrl.searchParams.set('url', url);
+        scraperUrl.searchParams.set('render', 'true');
+
+        const response = await fetch(scraperUrl.toString());
+
+        if (response.ok) {
+          const html = await response.text();
+          const urls = this.extractProductUrls(html);
+          urls.forEach(u => allProductUrls.add(u));
+
+          console.log(`    ✅ Found ${urls.length} products`);
+        }
+
+        // Rate limiting between sort requests
+        await this.delay(1000);
       }
 
-      const html = await response.text();
+      const productUrls = Array.from(allProductUrls);
+      console.log(`✅ Total unique products discovered: ${productUrls.length}`);
 
-      // Extract product URLs from HTML
-      const productUrls = this.extractProductUrls(html);
-
-      console.log(`✅ Found ${productUrls.length} product URLs`);
-
-      // Return limited number of URLs
+      // Return top products up to limit
       return productUrls.slice(0, limit);
     } catch (error) {
       console.error(`❌ Error discovering products:`, error);
@@ -104,31 +123,91 @@ export class TikTokScraper {
 
   /**
    * Extract product URLs from category page HTML
+   * Prioritizes products with trending indicators
    */
   private extractProductUrls(html: string): string[] {
-    const urls = new Set<string>();
+    interface ProductCandidate {
+      url: string;
+      score: number;
+    }
 
-    // Pattern 1: Direct product links
+    const productCandidates: ProductCandidate[] = [];
+    const seenUrls = new Set<string>();
+
+    // Pattern 1: Direct product links with context
     const productLinkPattern = /href="(https?:\/\/(?:www\.)?tiktok\.com\/view\/product\/\d+[^"]*)"/g;
     let match;
 
     while ((match = productLinkPattern.exec(html)) !== null) {
-      urls.add(match[1].split('?')[0]); // Remove query params
+      const url = match[1].split('?')[0];
+      if (!seenUrls.has(url)) {
+        seenUrls.add(url);
+
+        // Calculate quality score based on surrounding context
+        const contextStart = Math.max(0, match.index - 500);
+        const contextEnd = Math.min(html.length, match.index + 500);
+        const context = html.substring(contextStart, contextEnd).toLowerCase();
+
+        let score = 0;
+
+        // Boost for trending indicators (current viral products)
+        if (context.includes('trending') || context.includes('viral')) score += 10;
+        if (context.includes('best seller') || context.includes('bestseller')) score += 8;
+        if (context.includes('hot') || context.includes('popular')) score += 6;
+
+        // Boost for upcoming/emerging trend indicators
+        if (context.includes('new') || context.includes('just launched')) score += 7;
+        if (context.includes('rising') || context.includes('growing')) score += 6;
+        if (context.includes('limited') || context.includes('exclusive')) score += 5;
+
+        // Boost for high sales indicators (proven demand)
+        if (context.includes('sold') && /\d+k|million/i.test(context)) score += 5;
+
+        // Boost for early momentum (moderate sales = emerging trend)
+        if (context.includes('sold') && /\d+\s?(sold|sales)/i.test(context)) score += 4;
+
+        // Boost for ratings (quality products)
+        if (context.includes('rating') && /[4-5]\.\d/i.test(context)) score += 4;
+        if (context.includes('review') && /\d+k/i.test(context)) score += 3;
+
+        // Boost for moderate reviews (emerging trend sweet spot: 100-1000 reviews)
+        if (context.includes('review') && /\d{2,3}\s?review/i.test(context)) score += 4;
+
+        // Boost for discounts (trending products often have deals)
+        if (context.includes('off') && /\d+%/i.test(context)) score += 2;
+
+        // Boost for TikTok-specific viral indicators
+        if (context.includes('tiktok made me buy') || context.includes('tiktok viral')) score += 8;
+        if (context.includes('creator') || context.includes('influencer')) score += 3;
+
+        productCandidates.push({ url, score });
+      }
     }
 
-    // Pattern 2: Product IDs in JSON data
+    // Pattern 2: Product IDs in JSON data (also score these)
     const jsonPattern = /"product_id"\s*:\s*"?(\d+)"?/g;
     while ((match = jsonPattern.exec(html)) !== null) {
-      urls.add(`https://www.tiktok.com/view/product/${match[1]}`);
+      const url = `https://www.tiktok.com/view/product/${match[1]}`;
+      if (!seenUrls.has(url)) {
+        seenUrls.add(url);
+        productCandidates.push({ url, score: 1 }); // Default low score
+      }
     }
 
     // Pattern 3: Alternative product URL format
     const altLinkPattern = /href="(\/view\/product\/\d+[^"]*)"/g;
     while ((match = altLinkPattern.exec(html)) !== null) {
-      urls.add(`https://www.tiktok.com${match[1].split('?')[0]}`);
+      const url = `https://www.tiktok.com${match[1].split('?')[0]}`;
+      if (!seenUrls.has(url)) {
+        seenUrls.add(url);
+        productCandidates.push({ url, score: 1 });
+      }
     }
 
-    return Array.from(urls);
+    // Sort by score (highest first) and return URLs
+    return productCandidates
+      .sort((a, b) => b.score - a.score)
+      .map(p => p.url);
   }
 
   /**
