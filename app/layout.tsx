@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   title: "TokSpotter - The Radar for TikTok Shop Trends",
   description: "Know what's trending on TikTok Shop before it hits the mainstream",
   icons: {
-    icon: "/tokspotter.png",
-    apple: "/tokspotter.png",
+    icon: "/tsfav (1).png",
+    apple: "/tsfav (1).png",
   },
 };
 
