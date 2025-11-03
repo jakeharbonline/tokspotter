@@ -1,14 +1,26 @@
+"use client";
+
 import { Product } from "@/types/product";
 import Link from "next/link";
+import { useFavorites } from "@/lib/favorites-context";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const favorited = isFavorite(product.id);
+
   const discountPercent = product.original_price
     ? Math.round(((product.original_price - product.current_price) / product.original_price) * 100)
     : 0;
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavorite(product.id);
+  };
 
   const getGradeColor = (grade?: string) => {
     if (!grade) return "bg-gray-100 text-gray-700";
@@ -43,6 +55,13 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const trendBadge = getTrendBadge();
 
+  const getOpportunityColor = (score?: number) => {
+    if (!score) return "bg-gray-100 text-gray-700 border-gray-300";
+    if (score >= 80) return "bg-green-50 text-green-700 border-green-300";
+    if (score >= 60) return "bg-yellow-50 text-yellow-700 border-yellow-300";
+    return "bg-gray-50 text-gray-700 border-gray-300";
+  };
+
   return (
     <Link href={`/product/${product.id}`}>
       <div className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-200 overflow-hidden cursor-pointer group">
@@ -67,9 +86,36 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
+          {/* Opportunity Score Badge */}
+          {product.opportunity_score !== undefined && (
+            <div className={`absolute bottom-2 left-2 ${getOpportunityColor(product.opportunity_score)} text-xs px-3 py-1.5 rounded-lg font-bold border-2 backdrop-blur-sm`}>
+              🎯 {product.opportunity_score}
+            </div>
+          )}
+
+          {/* Favorite Button */}
+          <button
+            onClick={handleFavoriteClick}
+            className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-2 hover:bg-white transition-all hover:scale-110 shadow-md"
+            aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill={favorited ? "#ef4444" : "none"}
+              stroke={favorited ? "#ef4444" : "#6b7280"}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-5 h-5 transition-colors"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </button>
+
           {/* Discount Badge */}
           {discountPercent > 0 && (
-            <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold">
+            <div className="absolute top-14 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold">
               -{discountPercent}%
             </div>
           )}
@@ -115,8 +161,40 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
           </div>
 
+          {/* Opportunity Score */}
+          {product.opportunity_score !== undefined && (
+            <div className="pt-3 border-t border-gray-100">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-gray-500">Opportunity Score</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${
+                        product.opportunity_score >= 80
+                          ? 'bg-gradient-to-r from-green-400 to-green-600'
+                          : product.opportunity_score >= 60
+                          ? 'bg-gradient-to-r from-yellow-400 to-yellow-600'
+                          : 'bg-gradient-to-r from-gray-400 to-gray-600'
+                      }`}
+                      style={{ width: `${product.opportunity_score}%` }}
+                    />
+                  </div>
+                  <span className={`text-sm font-bold ${
+                    product.opportunity_score >= 80
+                      ? 'text-green-600'
+                      : product.opportunity_score >= 60
+                      ? 'text-yellow-600'
+                      : 'text-gray-600'
+                  }`}>
+                    {product.opportunity_score}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Trend Score */}
-          <div className="pt-3 border-t border-gray-100">
+          <div className={`${product.opportunity_score !== undefined ? 'pt-2' : 'pt-3 border-t border-gray-100'}`}>
             <div className="flex items-center justify-between">
               <span className="text-xs text-gray-500">Trend Score</span>
               <div className="flex items-center gap-2">

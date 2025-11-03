@@ -5,12 +5,14 @@ import { Product, TrendCategory } from "@/types/product";
 import ProductCard from "@/components/ProductCard";
 import FilterBar, { Filters } from "@/components/FilterBar";
 import { apiClient } from "@/lib/api-client";
+import { useFavorites } from "@/lib/favorites-context";
 
 export default function Home() {
+  const { favorites } = useFavorites();
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<TrendCategory | "all">("all");
+  const [activeTab, setActiveTab] = useState<TrendCategory | "all" | "favorites">("all");
   const [filters, setFilters] = useState<Filters>({
     category: null,
     country: null,
@@ -26,6 +28,12 @@ export default function Home() {
   });
 
   const loadProducts = useCallback(async () => {
+    // Skip loading when on favorites tab
+    if (activeTab === "favorites") {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const data = await apiClient.getTrendingProducts({
@@ -46,7 +54,10 @@ export default function Home() {
 
   // Apply filters and sorting
   useEffect(() => {
-    let result = [...allProducts];
+    // If on favorites tab, filter to only show favorited products
+    let result = activeTab === "favorites"
+      ? allProducts.filter(p => favorites.has(p.id))
+      : [...allProducts];
 
     // Apply category filter
     if (filters.category) {
@@ -122,7 +133,7 @@ export default function Home() {
     }
 
     setFilteredProducts(result);
-  }, [allProducts, filters]);
+  }, [allProducts, filters, activeTab, favorites]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -154,6 +165,7 @@ export default function Home() {
               { id: TrendCategory.BREAKOUT, label: "Breakouts", icon: "🧨" },
               { id: TrendCategory.SUSTAINED, label: "Sustained Winners", icon: "🔥" },
               { id: TrendCategory.DISCOUNT_DRIVEN, label: "Discount-Driven", icon: "💸" },
+              { id: "favorites", label: `Favorites${favorites.size > 0 ? ` (${favorites.size})` : ''}`, icon: "❤️" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -194,9 +206,13 @@ export default function Home() {
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No products found</p>
+            <p className="text-gray-500 text-lg">
+              {activeTab === "favorites" ? "No favorites yet" : "No products found"}
+            </p>
             <p className="text-gray-400 text-sm mt-2">
-              Try adjusting your filters
+              {activeTab === "favorites"
+                ? "Click the heart icon on any product to add it to your favorites"
+                : "Try adjusting your filters"}
             </p>
           </div>
         ) : (
