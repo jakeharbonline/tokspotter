@@ -1,6 +1,10 @@
 import { Product, ProductDetail, TrendCategory, ViabilityGrade } from "@/types/product";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+// Use relative URLs in production (works with custom domains), localhost in development
+const API_URL = process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? "http://localhost:3000"
+    : "");
 
 interface GetTrendingProductsParams {
   limit?: number;
