@@ -1,24 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FirestoreService } from '@/lib/services/firestore-service';
+import { generateMockProducts } from '@/lib/data/mock-products';
 import { TrendCategory } from '@/types/product';
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const limit = parseInt(searchParams.get('limit') || '200');
     const category = searchParams.get('category') || undefined;
     const country = searchParams.get('country') || undefined;
     const trendCategory = searchParams.get('trend_category') as TrendCategory | undefined;
     const minScore = parseFloat(searchParams.get('min_score') || '0');
 
-    const db = new FirestoreService();
-    const products = await db.getTrendingProducts({
-      limit,
-      category,
-      country,
-      trend_category: trendCategory,
-      min_score: minScore,
-    });
+    // Generate mock products for demo
+    let products = generateMockProducts(200);
+
+    // Apply filters
+    if (category) {
+      products = products.filter(p => p.category === category);
+    }
+    if (country) {
+      products = products.filter(p => p.country === country);
+    }
+    if (trendCategory) {
+      products = products.filter(p => p.trend_category === trendCategory);
+    }
+    if (minScore > 0) {
+      products = products.filter(p => p.trend_score >= minScore);
+    }
+
+    // Apply limit
+    products = products.slice(0, limit);
 
     return NextResponse.json(products);
   } catch (error) {
